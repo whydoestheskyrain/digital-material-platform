@@ -1,0 +1,21 @@
+# 可选本地覆盖文件。复制为项目根目录 application-local.yml；该文件不会提交。
+spring:
+  datasource:
+    username: root
+    password: <填写本机数据库密码>
+  redis:
+    password: <填写本机Redis密码；无密码则留空>
+
+jwt:
+  secret: <至少32位随机字符串>
+
+alipay:
+  app-id: <支付宝沙箱应用ID>
+  app-private-key: <支付宝应用私钥>
+  public-key: <支付宝公钥>
+  notify-url: <内网穿透或公网回调地址>/alipay/notify
+  recharge-notify-url: <内网穿透或公网回调地址>/recharge/notify
+
+dashscope:
+  api-key: <阿里云百炼API-Key>
+  app-id: <百炼应用ID>

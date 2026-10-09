@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.trade.virtual_trade.mapper.NotificationMapper">
+
+    <insert id="insert">
+        INSERT INTO notification (user_id, type, title, content, order_id, status, create_time)
+        VALUES (#{userId}, #{type}, #{title}, #{content}, #{orderId}, #{status}, NOW())
+    </insert>
+
+    <!--
+      用户可见消息（本人 + 广播）。
+      返回的 status 表示“当前用户是否已读”：
+        1) notification_read 有记录 → 1
+        2) 广播(user_id IS NULL)无记录 → 0（修复广播共享行一人已读全员已读）
+        3) 个人消息无记录 → 沿用原 status 列
+      同时 LEFT JOIN 订单表取订单号用于会话命名。
+    -->
+    <select id="selectVisibleByUserId" resultType="com.trade.virtual_trade.entity.Notification">
+        SELECT n.id, n.user_id, n.type, n.title, n.content, n.order_id,
+               CASE WHEN nr.notification_id IS NOT NULL THEN 1
+                    WHEN n.user_id IS NULL THEN 0
+                    ELSE n.status END AS status,
+               n.create_time,
+               o.order_no AS order_no
+        FROM notification n
+        LEFT JOIN notification_read nr ON nr.notification_id = n.id AND nr.user_id = #{userId}
+        LEFT JOIN `order` o ON o.id = n.order_id
+        WHERE n.user_id = #{userId} OR n.user_id IS NULL
+        ORDER BY n.create_time DESC
+    </select>
+
+    <select id="countUnread" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM notification n
+        LEFT JOIN notification_read nr ON nr.notification_id = n.id AND nr.user_id = #{userId}
+        WHERE (n.user_id = #{userId} OR n.user_id IS NULL)
+          AND nr.notification_id IS NULL
+          AND (n.user_id IS NULL OR n.status = 0)
+    </select>
+
+    <insert id="insertRead">
+        INSERT IGNORE INTO notification_read (user_id, notification_id)
+        VALUES (#{userId}, #{notificationId})
+    </insert>
+
+    <!-- 整组已读：订单会话按 order_id 精确匹配，其余按类型 -->
+    <insert id="insertReadByThread">
+        INSERT IGNORE INTO notification_read (user_id, notification_id)
+        SELECT #{userId}, n.id
+        FROM notification n
+        WHERE (n.user_id = #{userId} OR n.user_id IS NULL)
+        <choose>
+            <when test="orderId != null">
+                AND n.type = 'order' AND n.order_id = #{orderId}
+            </when>
+            <when test='"system".equals(type)'>
+                <!-- 与 buildThreadKey 保持一致：非订单/广播/反馈类型，以及 order_id 为空的订单消息都归入系统会话 -->
+                AND (n.type NOT IN ('order', 'broadcast', 'feedback')
+                     OR (n.type = 'order' AND n.order_id IS NULL))
+            </when>
+            <otherwise>
+                AND n.type = #{type}
+            </otherwise>
+        </choose>
+    </insert>
+
+    <insert id="insertReadAllVisible">
+        INSERT IGNORE INTO notification_read (user_id, notification_id)
+        SELECT #{userId}, n.id
+        FROM notification n
+        WHERE n.user_id = #{userId} OR n.user_id IS NULL
+    </insert>
+
+    <update id="updateStatus">
+        UPDATE notification SET status = #{status} WHERE id = #{id}
+    </update>
+
+    <delete id="deleteById">
+        DELETE FROM notification WHERE id = #{id}
+    </delete>
+
+    <select id="selectBroadcast" resultType="com.trade.virtual_trade.entity.Notification">
+        SELECT * FROM notification WHERE user_id IS NULL ORDER BY create_time DESC
+    </select>
+</mapper>

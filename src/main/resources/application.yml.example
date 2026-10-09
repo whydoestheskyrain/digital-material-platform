@@ -1,0 +1,59 @@
+# 复制为 application.yml 后，按本机环境填写；实际 application.yml 已被 Git 忽略。
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  config:
+    import: optional:file:./application-local.yml
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/trade_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: root
+    password: <填写数据库密码>
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: <填写Redis密码；无密码则留空>
+    database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.trade.virtual_trade.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: <至少32位随机字符串>
+
+alipay:
+  gateway-url: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  app-id: <支付宝沙箱应用ID>
+  app-private-key: <支付宝应用私钥>
+  public-key: <支付宝公钥>
+  charset: UTF-8
+  format: json
+  sign-type: RSA2
+  return-url: http://127.0.0.1:8080/#/user/center
+  notify-url: http://127.0.0.1:8080/alipay/notify
+  recharge-notify-url: http://127.0.0.1:8080/recharge/notify
+
+file:
+  upload:
+    path: ./uploads
+
+dashscope:
+  api-key: <阿里云百炼API-Key>
+  app-id: <百炼应用ID>
+
+app:
+  front-url: http://127.0.0.1:8080
+  server-url: http://127.0.0.1:8080
+  cors-origins: http://127.0.0.1:8080
