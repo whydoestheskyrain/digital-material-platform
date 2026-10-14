@@ -1,0 +1,27 @@
+package com.trade.virtual_trade.mapper;
+
+import com.trade.virtual_trade.entity.RechargeOrder;
+import org.apache.ibatis.annotations.*;
+
+@Mapper
+public interface RechargeOrderMapper {
+    @Insert("INSERT INTO recharge_order(order_no, user_id, amount, status, payment_method, create_time, update_time) " +
+            "VALUES(#{orderNo}, #{userId}, #{amount}, 0, #{paymentMethod}, NOW(), NOW())")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
+    int insert(RechargeOrder order);
+
+    @Select("SELECT * FROM recharge_order WHERE order_no = #{orderNo}")
+    RechargeOrder findByOrderNo(String orderNo);
+
+    /** 某用户的全部充值记录（账单/管理员取证） */
+    @Select("SELECT * FROM recharge_order WHERE user_id = #{userId} ORDER BY create_time DESC")
+    java.util.List<RechargeOrder> findByUserId(Integer userId);
+
+    @Update("UPDATE recharge_order SET status = #{status}, trade_no = #{tradeNo}, pay_time = NOW(), update_time = NOW() WHERE order_no = #{orderNo}")
+    int updateSuccess(@Param("orderNo") String orderNo, @Param("status") Integer status, @Param("tradeNo") String tradeNo);
+
+    /** 只允许待支付充值单第一次变为成功，重复支付宝通知更新行数为 0。 */
+    @Update("UPDATE recharge_order SET status = 1, trade_no = #{tradeNo}, pay_time = NOW(), update_time = NOW() " +
+            "WHERE order_no = #{orderNo} AND status = 0")
+    int markSuccessIfPending(@Param("orderNo") String orderNo, @Param("tradeNo") String tradeNo);
+}

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.trade.virtual_trade.mapper.GameTypeMapper">
+
+    <select id="findAll" resultType="com.trade.virtual_trade.entity.GameType">
+        SELECT * FROM game_type
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <select id="findAllEnabled" resultType="com.trade.virtual_trade.entity.GameType">
+        SELECT * FROM game_type
+        WHERE status = 1
+        ORDER BY sort_order ASC, id ASC
+    </select>
+
+    <insert id="add" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO game_type(type_name, icon, sort_order, status)
+        VALUES(#{typeName}, #{icon},
+               <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>0</otherwise></choose>,
+               <choose><when test="status != null">#{status}</when><otherwise>1</otherwise></choose>)
+    </insert>
+
+    <update id="update">
+        UPDATE game_type
+        SET type_name = #{typeName},
+            icon = #{icon},
+            sort_order = <choose><when test="sortOrder != null">#{sortOrder}</when><otherwise>0</otherwise></choose>,
+            status = <choose><when test="status != null">#{status}</when><otherwise>1</otherwise></choose>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM game_type WHERE id = #{id}
+    </delete>
+
+    <select id="findById" resultType="com.trade.virtual_trade.entity.GameType">
+        SELECT * FROM game_type WHERE id = #{id}
+    </select>
+
+</mapper>
