@@ -26,11 +26,11 @@ v3/
 
 ### v3
 
-1. 在 `v3/backend` 中，参考 `src/main/resources/application.yml.example` 配置本地数据库、Redis 和服务密钥。实际配置文件已被该目录的 `.gitignore` 忽略。
+1. 在 `v3/backend` 中，将 `src/main/resources/application.yml.example` 复制为同目录下的 `application.yml`，配置本地数据库、Redis 和服务密钥，并把 `server.port` 改为 `8081`。实际配置文件已被该目录的 `.gitignore` 忽略。
 2. 在 `v3/backend` 中运行 `./mvnw spring-boot:run`（Windows 用 `mvnw.cmd spring-boot:run`）。
 3. 在 `v3/frontend` 中运行 `npm ci`，再运行 `npm run serve`。
 
-v3 前端开发服务默认使用 `http://localhost:8082`，其代理配置指向 `http://localhost:8081`。运行前请核对后端端口与 `v3/frontend/vue.config.js` 一致。
+v3 前端开发服务默认使用 `http://localhost:8082`，其代理配置指向 `http://localhost:8081`。若使用支付宝回跳或跨域请求，还需在本地后端配置中将前端地址设为 `http://localhost:8082`、后端地址设为 `http://localhost:8081`。
 
 ### v2
 
