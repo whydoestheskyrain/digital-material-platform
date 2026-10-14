@@ -1,0 +1,74 @@
+server:
+  port: 8081
+  address: 0.0.0.0
+
+spring:
+  # 可选的本地私密配置（项目根目录 application-local.yml，已在 .gitignore 中忽略，不入库也不打包进 jar）
+  # 本地开发的真实密钥/内网穿透地址写在该文件中覆盖以下占位值；没有该文件也能正常启动
+  config:
+    import: optional:file:./application-local.yml
+  datasource:
+    url: jdbc:mysql://localhost:3306/trade_db?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  sql:
+    init:
+      mode: always
+  redis:
+    host: localhost
+    port: 6379
+    password: ${REDIS_PASSWORD:}
+    database: 0
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.trade.virtual_trade.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+logging:
+  level:
+    org.springframework.web.servlet.resource: ERROR
+
+# JWT 密钥：生产环境务必通过环境变量 JWT_SECRET 注入（至少 32 字符随机串）
+jwt:
+  secret: ${JWT_SECRET:dev-only-secret-please-change-in-production-0123456789}
+
+# 支付宝沙箱配置：请在支付宝开放平台获取自己的密钥对，通过环境变量或
+# application-local.yml 注入，切勿把真实私钥提交到代码仓库
+alipay:
+  gateway-url: https://openapi-sandbox.dl.alipaydev.com/gateway.do
+  app-id: ${ALIPAY_APP_ID:your-sandbox-app-id}
+  # 应用私钥（敏感）
+  app-private-key: ${ALIPAY_APP_PRIVATE_KEY:}
+  # 支付宝公钥
+  public-key: ${ALIPAY_PUBLIC_KEY:}
+  charset: UTF-8
+  format: json
+  sign-type: RSA2
+  return-url: ${ALIPAY_RETURN_URL:http://localhost:8082/#/user/center}
+  # 本地沙箱联调如使用内网穿透，在 application-local.yml 中覆盖为你的穿透地址
+  notify-url: ${ALIPAY_NOTIFY_URL:http://localhost:8081/alipay/notify}
+  recharge-notify-url: ${ALIPAY_RECHARGE_NOTIFY_URL:http://localhost:8081/recharge/notify}
+file:
+  upload:
+    path: ./uploads/
+
+# 阿里云百炼 DashScope（AI 桌宠对话）配置：API Key 为敏感信息，
+# 请到 https://bailian.console.aliyun.com/ 获取，通过环境变量或 local 文件注入
+dashscope:
+  api-key: ${DASHSCOPE_API_KEY:}
+  app-id: ${DASHSCOPE_APP_ID:your-dashscope-app-id}
+
+# 站点地址（开发环境；生产环境由 application-prod.yml 覆盖）
+app:
+  front-url: http://localhost:8082
+  server-url: http://localhost:8081
+  # 跨域允许来源，多个用逗号分隔；生产环境通过环境变量 APP_CORS_ORIGINS 注入
+  cors-origins: ${APP_CORS_ORIGINS:http://localhost:8080,http://localhost:8082,http://localhost:8083}

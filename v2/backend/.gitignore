@@ -1,0 +1,51 @@
+HELP.md
+target/
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### VS Code ###
+.vscode/
+
+### 私密配置（含真实密钥，禁止提交；模板见 application-local.yml.example） ###
+/application-local.yml
+**/application-local.yml
+
+### 运行时产物：用户上传文件（头像/商品图）不入库 ###
+uploads/
+
+### 日志 ###
+*.log
+logs/
+
+### 本地接口测试文件 ###
+*.http
+
+### OS 杂项 ###
+.DS_Store
+Thumbs.db

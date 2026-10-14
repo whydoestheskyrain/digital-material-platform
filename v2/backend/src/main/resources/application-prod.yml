@@ -1,0 +1,56 @@
+# ==========================
+# 生产环境配置（Docker Compose）
+# 启动方式：java -jar virtual-trade.jar --spring.profiles.active=prod
+# Docker 部署时数据库/Redis 地址及所有密钥通过环境变量注入（见 docker-compose.yml）
+# 本文件只覆盖与开发环境不同的配置项，其余继承 application.yml
+# ==========================
+
+server:
+  port: 8081
+  address: 0.0.0.0
+
+spring:
+  datasource:
+    # 容器内由 compose 注入数据库连接信息
+    url: jdbc:mysql://${DB_HOST:mysql}:${DB_PORT:3306}/${DB_NAME:trade_db}?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  # 生产环境禁止启动时自动执行 schema.sql，表结构由初始化脚本统一创建
+  sql:
+    init:
+      mode: never
+  redis:
+    host: ${REDIS_HOST:redis}
+    port: ${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:}
+    database: 0
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.trade.virtual_trade.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    # 生产环境关闭 SQL 控制台打印
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+# 支付宝沙箱回调地址：生产域名/IP 通过环境变量 APP_SERVER_HOST 注入
+alipay:
+  return-url: http://${APP_SERVER_HOST:your-server-ip}/#/user/center
+  notify-url: http://${APP_SERVER_HOST:your-server-ip}/alipay/notify
+  recharge-notify-url: http://${APP_SERVER_HOST:your-server-ip}/recharge/notify
+
+# 文件上传目录（容器内挂载到宿主机 data/uploads 持久化）
+file:
+  upload:
+    path: ./uploads/
+
+# 站点地址：由环境变量 APP_SERVER_HOST 注入服务器域名/IP
+app:
+  front-url: http://${APP_SERVER_HOST:your-server-ip}
+  server-url: http://${APP_SERVER_HOST:your-server-ip}
+  cors-origins: ${APP_CORS_ORIGINS:http://your-server-ip}
+
+logging:
+  level:
+    org.springframework.web.servlet.resource: ERROR
