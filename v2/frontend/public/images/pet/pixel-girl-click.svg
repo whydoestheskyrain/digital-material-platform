@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="80" height="80">
+  <rect width="64" height="64" fill="transparent"/>
+  <ellipse cx="32" cy="48" rx="12" ry="14" fill="#ff9999">
+    <animate attributeName="cy" values="48;40;48" dur="0.5s" repeatCount="3"/>
+  </ellipse>
+  <ellipse cx="32" cy="28" rx="14" ry="16" fill="#ffcccc">
+    <animate attributeName="cy" values="28;20;28" dur="0.5s" repeatCount="3"/>
+  </ellipse>
+  <ellipse cx="26" cy="25" rx="3" ry="4" fill="#333"/>
+  <ellipse cx="38" cy="25" rx="3" ry="4" fill="#333"/>
+  <circle cx="27" cy="24" r="1" fill="#fff"/>
+  <circle cx="39" cy="24" r="1" fill="#fff"/>
+  <ellipse cx="32" cy="32" rx="3" ry="2" fill="#ff6666"/>
+  <path d="M28 34 Q32 38 36 34" stroke="#333" stroke-width="2" fill="none"/>
+  <rect x="20" y="42" width="8" height="18" fill="#4488ff" rx="2"/>
+  <rect x="36" y="42" width="8" height="18" fill="#4488ff" rx="2"/>
+  <rect x="24" y="58" width="6" height="6" fill="#333"/>
+  <rect x="34" y="58" width="6" height="6" fill="#333"/>
+</svg>

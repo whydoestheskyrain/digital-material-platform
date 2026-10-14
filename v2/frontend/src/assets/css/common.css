@@ -1,0 +1,453 @@
+/* ==================================================================
+   全局设计变量（色彩 / 圆角 / 阴影）——所有页面统一引用，禁止新页面私定渐变色值
+   ================================================================== */
+:root {
+  /* 品牌主色 */
+  --color-primary: #667eea;
+  --color-primary-end: #764ba2;
+  --color-primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --color-primary-gradient-hover: linear-gradient(135deg, #7c8eea 0%, #8b5ba2 100%);
+
+  /* 统一渐变色板（统计卡 / 账单卡 / 图标容器一律引用，禁止页面私定） */
+  --gradient-blue: linear-gradient(135deg, #4facfe 0%, #2b7de9 100%);
+  --gradient-cyan: linear-gradient(135deg, #2bc4c4 0%, #0e95a8 100%);
+  --gradient-green: linear-gradient(135deg, #43c59e 0%, #1ea97c 100%);
+  --gradient-orange: linear-gradient(135deg, #ffa940 0%, #f57c00 100%);
+  --gradient-pink: linear-gradient(135deg, #f06292 0%, #d83a73 100%);
+  --gradient-violet: linear-gradient(135deg, #9b7ef0 0%, #7a54d6 100%);
+
+  /* 功能色（文字/图标用加深档，保证浅底上对比度 ≥ 4.5:1） */
+  --color-success: #52a932;
+  --color-success-bg: #f0f9eb;
+  --color-warning: #c77700;
+  --color-warning-bg: #fdf6ec;
+  --color-danger: #dd3a3d;
+  --color-danger-bg: #fef0f0;
+  --color-info: #6b7280;
+  --color-info-bg: #f4f4f5;
+  --color-link: #5b6fd6;
+
+  /* 中性色 */
+  --color-text-primary: #1f2329;
+  --color-text-regular: #4b5563;
+  --color-text-secondary: #6b7280;
+  --color-text-placeholder: #9aa0a6;
+  --color-border: #e5e7eb;
+  --color-border-light: #f0f0f0;
+  --color-bg-page: #f0f2f5;
+
+  /* 圆角 */
+  --radius-card: 12px;
+  --radius-btn: 8px;
+  --radius-tag: 6px;
+  --radius-dialog: 14px;
+
+  /* 阴影三级体系 */
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 6px 20px rgba(0, 0, 0, 0.10);
+  --shadow-dialog: 0 12px 40px rgba(0, 0, 0, 0.18);
+}
+
+/* 全局重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body, #app {
+  height: 100%;
+  font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+  background: var(--color-bg-page);
+  color: var(--color-text-primary);
+}
+
+/* 容器通用类：居中、自适应宽度 */
+.container {
+  max-width: 1200px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+/* 响应式断点：1200 小桌面 / 992 平板 / 768 手机 */
+@media (max-width: 1200px) {
+  .container { width: 94%; }
+}
+@media (max-width: 768px) {
+  .container { width: 95%; }
+}
+
+/* 页面包装器通用样式 */
+.page-wrapper {
+  min-height: 100vh;
+  padding: 40px 0;
+  background: linear-gradient(180deg, #f0f2f5 0%, #e8ecf0 100%);
+  position: relative;
+}
+
+.page-wrapper::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(118, 75, 162, 0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.page-wrapper > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 768px) {
+  .page-wrapper { padding: 20px 0; }
+}
+
+/* 表单包装器通用样式 */
+.form-wrapper {
+  background: white;
+  padding: 30px;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* 图片自适应 */
+.img-responsive {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ==================================================================
+   Emoji 图标统一容器：固定尺寸，避免不同行高/系统下大小跳动
+   业务功能图标请使用 Element Plus 图标，Emoji 仅用于装饰
+   ================================================================== */
+.emoji-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  font-size: 16px;
+  line-height: 1;
+  flex-shrink: 0;
+  vertical-align: -0.15em;
+}
+.emoji-icon--lg { width: 24px; height: 24px; font-size: 22px; }
+
+/* 业务内联图标统一对齐 */
+.el-icon { vertical-align: -0.15em; }
+
+/* ==================================================================
+   全局按钮：渐变主按钮文字强制白色加粗，保证对比度
+   ================================================================== */
+.el-button {
+  border-radius: var(--radius-btn);
+  font-size: 14px;
+  padding: 10px 20px;
+  transition: all 0.3s ease;
+}
+
+.el-button--small {
+  font-size: 12px;
+  padding: 6px 14px;
+}
+
+.el-button--mini {
+  font-size: 11px;
+  padding: 4px 10px;
+}
+
+.el-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.el-button:active { transform: translateY(0); }
+/* 触屏设备禁用 hover 位移动画，避免粘滞 */
+@media (hover: none) {
+  .el-button:hover { transform: none; }
+}
+
+.el-button--primary {
+  background: var(--color-primary-gradient);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.35);
+}
+
+.el-button--primary:hover {
+  background: var(--color-primary-gradient-hover);
+  color: #fff;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.45);
+}
+
+.el-button--success {
+  background: linear-gradient(135deg, #52a932 0%, #74c248 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(82, 169, 50, 0.3);
+}
+
+.el-button--warning {
+  background: linear-gradient(135deg, #e0860a 0%, #f0a73a 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(224, 134, 10, 0.3);
+}
+
+.el-button--danger {
+  background: linear-gradient(135deg, #dd3a3d 0%, #f06b6e 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(221, 58, 61, 0.3);
+}
+
+.el-button--info {
+  background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
+}
+
+.el-button--text {
+  color: var(--color-link);
+  padding: 10px 14px;
+}
+.el-button--text:hover {
+  color: var(--color-primary-end);
+  background: rgba(102, 126, 234, 0.1);
+}
+
+/* 导航栏按钮样式 */
+.navbar-button {
+  color: white !important;
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+.navbar-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+.navbar-button--primary {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+}
+.navbar-button--danger {
+  background: linear-gradient(135deg, #dd3a3d 0%, #f06b6e 100%) !important;
+  border-color: #dd3a3d !important;
+}
+
+/* 导航栏响应式优化 */
+@media (max-width: 768px) {
+  .header-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .header-btns .el-button {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+/* 表格按钮区域 */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.action-buttons .el-button {
+  font-size: 12px;
+  padding: 5px 12px;
+}
+
+/* ==================================================================
+   卡片 / 表格 / 弹窗：统一圆角与三级阴影
+   ================================================================== */
+.card {
+  background: white;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.data-table {
+  background: white;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* 弹窗 / 抽屉使用最重一级阴影，与页面卡片拉开层级 */
+.el-dialog,
+.el-drawer {
+  border-radius: var(--radius-dialog);
+  box-shadow: var(--shadow-dialog);
+  overflow: hidden;
+}
+
+/* ==================================================================
+   Element Plus 标签（el-tag）浅色变体：文字加深，浅底也能看清
+   ================================================================== */
+.el-tag {
+  border-radius: var(--radius-tag);
+  font-weight: 600;
+}
+.el-tag.el-tag--success.is-plain {
+  color: #3d8a1f;
+  background: var(--color-success-bg);
+  border-color: #b3e19d;
+}
+.el-tag.el-tag--warning.is-plain {
+  color: #a86400;
+  background: var(--color-warning-bg);
+  border-color: #f3d19e;
+}
+.el-tag.el-tag--danger.is-plain {
+  color: #c42b2e;
+  background: var(--color-danger-bg);
+  border-color: #fbc4c4;
+}
+.el-tag.el-tag--info.is-plain,
+.el-tag.el-tag--primary.is-plain {
+  color: #4b5563;
+  background: var(--color-info-bg);
+  border-color: #d3d4d6;
+}
+
+/* ==================================================================
+   空状态
+   ================================================================== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: white;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+.empty-icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+  opacity: 0.8;
+}
+.empty-title {
+  font-size: 18px;
+  color: var(--color-text-primary);
+  margin-bottom: 10px;
+}
+.empty-desc {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* ==================================================================
+   动效管控：尊重系统「减少动态效果」偏好 + 全局 .reduce-motion 开关
+   —— 所有装饰动画（floating / bounce / pulse / float / shimmer）在此统一关闭
+   ================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ==================================================================
+   路由页面过渡（轻量淡入，避免整页位移造成的视觉杂乱）
+   ================================================================== */
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.22s ease;
+}
+.page-fade-enter-from,
+.page-fade-leave-to {
+  opacity: 0;
+}
+
+html.reduce-motion .page-fade-enter-active,
+html.reduce-motion .page-fade-leave-active {
+  transition: none !important;
+}
+
+/* ==================================================================
+   资金安全感：风险提示卡片（订单详情 / 交易说明通用）
+   ================================================================== */
+.risk-tip-card {
+  border-radius: var(--radius-card);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #fff8ed 0%, #fff0f0 100%);
+  border: 1px solid #fde0c2;
+  box-shadow: var(--shadow-card);
+}
+.risk-tip-card .risk-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 600;
+  color: #c77700;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+.risk-tip-card .risk-title .el-icon {
+  color: var(--color-warning);
+}
+.risk-tip-card ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--color-text-regular);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.risk-tip-card li strong {
+  color: var(--color-danger);
+}
+
+/* 金额数字：等宽 + 千位分隔，提升大数可读性 */
+.amount-num {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+/* ==================================================================
+   表单校验：错误提示固定显示在输入框下方（占据文档流，不悬浮遮挡输入框）
+   ================================================================== */
+.el-form-item__error {
+  position: static;
+  padding-top: 4px;
+  line-height: 1.4;
+  font-weight: 400;
+}
